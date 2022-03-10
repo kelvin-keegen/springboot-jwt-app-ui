@@ -1,31 +1,51 @@
 package com.example.application.views.login;
 
-import com.example.application.views.MainLayout;
-import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import lombok.extern.slf4j.Slf4j;
+
+import java.awt.*;
 
 @PageTitle("Login")
-@Route(value = "login", layout = MainLayout.class)
+@Route(value = "login")
+@Slf4j
 public class LoginView extends VerticalLayout {
 
     public LoginView() {
-        setSpacing(false);
 
-        Image img = new Image("images/empty-plant.png", "placeholder plant");
-        img.setWidth("200px");
-        add(img);
+        TextField textFieldUserName = new TextField("Email *");
+        PasswordField passwordField = new PasswordField("Password *");
 
-        add(new H2("This place intentionally left empty"));
-        add(new Paragraph("It’s a place where you can grow your own UI 🤗"));
+        Button buttonSend = new Button("Login");
+        buttonSend.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        setSizeFull();
-        setJustifyContentMode(JustifyContentMode.CENTER);
+        Button buttonReset = new Button("Forgot your password? Click here to reset your password");
+        buttonReset.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+        Button buttonRegister = new Button("Don't have an account? Let's go get an account right now");
+        buttonRegister.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        buttonRegister.addThemeVariants(ButtonVariant.LUMO_SMALL);
+
+        add(
+                new H1("Hi there! Welcome back. :)"),
+                new H5("Please input your credentials to proceed"),
+                textFieldUserName,
+                passwordField,
+                buttonSend,
+                buttonReset,
+                buttonRegister,
+                new Paragraph("Please, contact support@company.com if you're experiencing issues logging into your account")
+        );
+
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        getStyle().set("text-align", "center");
     }
 
 }

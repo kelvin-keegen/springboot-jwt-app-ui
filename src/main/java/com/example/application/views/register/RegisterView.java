@@ -1,31 +1,54 @@
 package com.example.application.views.register;
 
-import com.example.application.views.MainLayout;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @PageTitle("Register")
-@Route(value = "register", layout = MainLayout.class)
+@Route(value = "register")
 public class RegisterView extends VerticalLayout {
 
     public RegisterView() {
-        setSpacing(false);
 
-        Image img = new Image("images/empty-plant.png", "placeholder plant");
-        img.setWidth("200px");
-        add(img);
+        TextField textFieldFirstName = new TextField("First name");
+        TextField textFieldLastName = new TextField("Last name");
+        TextField textFieldUserName = new TextField("Username");
+        TextField textFieldEmail = new TextField("Email");
+        PasswordField passwordField = new PasswordField("Create a Password");
 
-        add(new H2("This place intentionally left empty"));
-        add(new Paragraph("It’s a place where you can grow your own UI 🤗"));
+        Button buttonSend = new Button("SignUp");
+        buttonSend.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonSend.addClickListener(buttonClickEvent -> {
 
-        setSizeFull();
-        setJustifyContentMode(JustifyContentMode.CENTER);
+            // Do stuff
+
+        });
+
+        Button buttonLogin = new Button("Got an account? Let's go login right now!");
+        buttonLogin.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        buttonLogin.addThemeVariants(ButtonVariant.LUMO_SMALL);
+
+
+
+        add(
+                new H1("Hello Stranger! want to SignUp?"),
+                new H5("Let's get to know each other a bit better... :)"),
+                textFieldFirstName,
+                textFieldLastName,
+                textFieldUserName,
+                textFieldEmail,
+                passwordField,
+                buttonSend,
+                buttonLogin,
+                new H5("By Signing up you agree to the terms and conditions that are stipulated in the use of this SaaS.")
+        );
+
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        getStyle().set("text-align", "center");
     }
 
 }
