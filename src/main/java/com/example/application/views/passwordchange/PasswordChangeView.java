@@ -1,8 +1,10 @@
 package com.example.application.views.passwordchange;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
@@ -22,6 +24,12 @@ public class PasswordChangeView extends VerticalLayout {
         Button buttonChange = new Button("Please change my Password");
         buttonChange.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
+        Button buttonTryLoggin = new Button("Test new password", VaadinIcon.LOCK.create());
+        buttonTryLoggin.addClickListener(buttonClickEvent -> {
+
+            UI.getCurrent().navigate("login");
+        });
+
         add(
                 new H1("Password Change"),
                 new H5("Please make sure to remember your new password upon change."),
@@ -30,6 +38,7 @@ public class PasswordChangeView extends VerticalLayout {
                 textFieldNewPWD,
                 textFieldVeryPWD,
                 buttonChange,
+                buttonTryLoggin,
                 new H5("A confirmation will be displayed upon successful password change")
         );
 

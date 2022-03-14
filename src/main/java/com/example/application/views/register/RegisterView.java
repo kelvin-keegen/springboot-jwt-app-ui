@@ -1,5 +1,6 @@
 package com.example.application.views.register;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.*;
@@ -25,13 +26,18 @@ public class RegisterView extends VerticalLayout {
         buttonSend.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonSend.addClickListener(buttonClickEvent -> {
 
-            // Do stuff
+            UI.getCurrent().navigate("login");
 
         });
 
         Button buttonLogin = new Button("Got an account? Let's go login right now!");
         buttonLogin.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         buttonLogin.addThemeVariants(ButtonVariant.LUMO_SMALL);
+        buttonLogin.addClickListener(buttonClickEvent -> {
+
+            UI.getCurrent().navigate("login");
+
+        });
 
 
 
