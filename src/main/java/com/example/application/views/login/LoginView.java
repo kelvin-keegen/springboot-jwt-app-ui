@@ -1,36 +1,73 @@
 package com.example.application.views.login;
 
+import com.example.application.utils.MyNotificationService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.*;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import lombok.extern.slf4j.Slf4j;
-
-import java.awt.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @PageTitle("Login")
 @Route(value = "login")
 @Slf4j
 public class LoginView extends VerticalLayout {
 
+    @Autowired
+    private MyNotificationService myNotificationService;
+
     public LoginView() {
 
-        TextField textFieldUserName = new TextField("Email *");
-        PasswordField passwordField = new PasswordField("Password *");
+        TextField textFieldUserName = new TextField("Email");
+        textFieldUserName.setRequired(true);
+        PasswordField passwordField = new PasswordField("Password");
+        passwordField.setRequired(true);
 
         Button buttonSend = new Button("Login", VaadinIcon.UNLOCK.create());
         buttonSend.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonSend.addClickListener(buttonClickEvent -> {
 
-            UI.getCurrent().navigate("home");
+            if (textFieldUserName.isEmpty() || passwordField.isEmpty()) {
+
+                String message = "";
+
+                if (textFieldUserName.isEmpty()) {
+
+                    message = "Email is required";
+                    textFieldUserName.setInvalid(true);
+                    textFieldUserName.setErrorMessage(message);
+                }
+
+                 if (passwordField.isEmpty()) {
+
+                     message = "Password is required";
+                     passwordField.setInvalid(true);
+                     passwordField.setErrorMessage(message);
+                 }
+
+                myNotificationService.SendErrorNotification("Email and Password are both required")
+                        .addDetachListener(detachEvent -> {
+
+                            buttonSend.setEnabled(true);
+                            textFieldUserName.setInvalid(false);
+                            textFieldUserName.setErrorMessage("");
+                            passwordField.setInvalid(false);
+                            passwordField.setErrorMessage("");
+
+                        });
+
+            } else {
+
+                UI.getCurrent().navigate("home");
+
+            }
 
         });
 
