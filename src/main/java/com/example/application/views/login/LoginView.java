@@ -1,12 +1,13 @@
 package com.example.application.views.login;
 
+import com.example.application.entity.models.ApiResponseBody;
 import com.example.application.utils.MyNotificationService;
+import com.example.application.utils.RestClientService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -14,6 +15,13 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @PageTitle("Login")
 @Route(value = "login")
@@ -22,6 +30,13 @@ public class LoginView extends VerticalLayout {
 
     @Autowired
     private MyNotificationService myNotificationService;
+    @Autowired
+    private RestClientService restClientService;
+
+    @Value("${api-server.login.link}")
+    private String serverLink;
+
+    public String CurrentToken;
 
     public LoginView() {
 
@@ -65,7 +80,40 @@ public class LoginView extends VerticalLayout {
 
             } else {
 
-                UI.getCurrent().navigate("home");
+                buttonSend.setEnabled(false);
+
+                // Sending Request to server
+
+                MediaType mediaType = MediaType.parseMediaType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+                MultiValueMap<String,String> authObjectModel = new LinkedMultiValueMap<>();
+                authObjectModel.add("username",textFieldUserName.getValue());
+                authObjectModel.add("password", passwordField.getValue());
+
+                ApiResponseBody responseBody = restClientService.Http_POST_ResponseBody(serverLink,mediaType,authObjectModel,"");
+
+                if (responseBody.getMessage() == null) {
+
+                    myNotificationService.SendErrorNotification("Internal server error")
+                            .addDetachListener(detachEvent -> {
+
+                                buttonSend.setEnabled(true);
+
+                            });
+                }
+
+                if (responseBody.getMessage() != null && responseBody.getData() != null) {
+
+                    UI.getCurrent().navigate("home");
+
+                } else {
+
+                    myNotificationService.SendErrorNotification(responseBody.getMessage())
+                            .addDetachListener(detachEvent -> {
+
+                                buttonSend.setEnabled(true);
+
+                            });
+                }
 
             }
 
