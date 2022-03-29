@@ -19,6 +19,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import lombok.extern.slf4j.Slf4j;
+import org.w3c.dom.ls.LSOutput;
 
 @PageTitle("Home")
 @Route(value = "home")
@@ -46,7 +47,8 @@ public class HomeView extends AppLayout {
     private Tabs getTabs() {
         Tabs tabs = new Tabs();
         tabs.add(
-                createTab(VaadinIcon.SERVER, "Credentials")
+                createTab(VaadinIcon.SERVER, "Credentials"),
+                createTab(VaadinIcon.UNLOCK,"Password Change")
                 /*createTab(VaadinIcon.CART, "Orders"),
                 createTab(VaadinIcon.USER_HEART, "Customers"),
                 createTab(VaadinIcon.PACKAGE, "Products"),
@@ -84,9 +86,19 @@ public class HomeView extends AppLayout {
         img.setWidth("200px");
 
         String templateToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c[This is a template]";
+        String accessToken = "";
+        String refreshToken = "";
 
-        String accessToken = templateToken;
-        String refreshToken = templateToken;
+        try {
+
+             accessToken = UI.getCurrent().getSession().getAttribute("accessToken").toString();
+             refreshToken = UI.getCurrent().getSession().getAttribute("refreshToken").toString();
+
+        } catch (Exception exception) {
+
+            log.error("[Exception caught] : Session attributes have value {}",exception.getMessage());
+
+        }
 
         TextArea accessTxt = new TextArea("Access Token");
         TextArea refreshTxt = new TextArea("Refresh Token");
@@ -118,6 +130,8 @@ public class HomeView extends AppLayout {
         Button buttonLogout = new Button("Logout from account");
         buttonLogout.addClickListener(buttonClickEvent -> {
 
+            UI.getCurrent().getSession().setAttribute("accessToken","");
+            UI.getCurrent().getSession().setAttribute("refreshToken","");
             UI.getCurrent().navigate("login");
 
         });

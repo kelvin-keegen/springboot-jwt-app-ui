@@ -3,6 +3,8 @@ package com.example.application.views.login;
 import com.example.application.entity.models.ApiResponseBody;
 import com.example.application.utils.MyNotificationService;
 import com.example.application.utils.RestClientService;
+import com.example.application.utils.RetrievalService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -20,8 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @PageTitle("Login")
 @Route(value = "login")
@@ -32,6 +33,8 @@ public class LoginView extends VerticalLayout {
     private MyNotificationService myNotificationService;
     @Autowired
     private RestClientService restClientService;
+    @Autowired
+    private RetrievalService retrievalService;
 
     @Value("${api-server.login.link}")
     private String serverLink;
@@ -103,7 +106,27 @@ public class LoginView extends VerticalLayout {
 
                 if (responseBody.getMessage() != null && responseBody.getData() != null) {
 
-                    UI.getCurrent().navigate("home");
+                    // Unpack data
+                    String accessTokenValue = retrievalService.GetObjValue(responseBody.getData(),"accessToken").toString();
+                    String refreshTokenValue = retrievalService.GetObjValue(responseBody.getData(),"refreshToken").toString();
+
+                    if (!accessTokenValue.isEmpty() && !refreshTokenValue.isEmpty()) {
+
+                        UI.getCurrent().getSession().setAttribute("accessToken",accessTokenValue);   // per user.
+                        UI.getCurrent().getSession().setAttribute("refreshToken",refreshTokenValue);
+
+                        UI.getCurrent().navigate("home");
+
+                    } else {
+
+                        myNotificationService.SendErrorNotification("Something went wrong!")
+                                .addDetachListener(detachEvent -> {
+
+                                    buttonSend.setEnabled(true);
+
+                                });
+
+                    }
 
                 } else {
 
