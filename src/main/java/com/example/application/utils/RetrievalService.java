@@ -1,9 +1,12 @@
 package com.example.application.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.flow.component.UI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,5 +28,20 @@ public class RetrievalService {
 
     }
 
+    public Object WriteJsonObject(Object objectInput) {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = null;
+
+        try {
+
+            json = objectMapper.writeValueAsString(objectInput);
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return json;
+    }
 
 }

@@ -1,5 +1,7 @@
 package com.example.application.views.home;
 
+import com.example.application.views.passwordchange.PasswordChangeView;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -40,27 +42,25 @@ public class HomeView extends AppLayout {
 
         addToDrawer(tabs);
         addToNavbar(toggle, title);
-        setContent(CredentialsTabComponents());
-
+        setContent(SetRootDefaultContent());
     }
 
     private Tabs getTabs() {
+
         Tabs tabs = new Tabs();
         tabs.add(
-                createTab(VaadinIcon.SERVER, "Credentials"),
-                createTab(VaadinIcon.UNLOCK,"Password Change")
-                /*createTab(VaadinIcon.CART, "Orders"),
-                createTab(VaadinIcon.USER_HEART, "Customers"),
-                createTab(VaadinIcon.PACKAGE, "Products"),
-                createTab(VaadinIcon.RECORDS, "Documents"),
-                createTab(VaadinIcon.LIST, "Tasks"),
-                createTab(VaadinIcon.CHART, "Analytics")*/
+                createTab(VaadinIcon.HOME,"Home",HomeView.class),
+                createTab(VaadinIcon.SERVER, "credentials",CredentialsView.class),
+                createTab(VaadinIcon.UNLOCK,"Password Change", PasswordChangeView.class)
+
         );
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
+
         return tabs;
     }
 
-    private Tab createTab(VaadinIcon viewIcon, String viewName) {
+    private Tab createTab(VaadinIcon viewIcon, String viewName, Class<? extends Component> navigationTarget) {
+
         Icon icon = viewIcon.create();
         icon.getStyle()
                 .set("box-sizing", "border-box")
@@ -70,82 +70,24 @@ public class HomeView extends AppLayout {
 
         RouterLink link = new RouterLink();
         link.add(icon, new Span(viewName));
-        // Demo has no routes
-        // link.setRoute(viewClass.java);
-        link.setTabIndex(-1);
+        link.setRoute(navigationTarget);
 
         return new Tab(link);
 
     }
 
-    public VerticalLayout CredentialsTabComponents() {
+    public VerticalLayout SetRootDefaultContent() {
 
         VerticalLayout verticalLayout = new VerticalLayout();
 
         Image img = new Image("images/empty-plant.png", "placeholder plant");
-        img.setWidth("200px");
+        img.setWidth("300px");
 
-        String templateToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c[This is a template]";
-        String accessToken = "";
-        String refreshToken = "";
+        verticalLayout.add(
 
-        try {
-
-             accessToken = UI.getCurrent().getSession().getAttribute("accessToken").toString();
-             refreshToken = UI.getCurrent().getSession().getAttribute("refreshToken").toString();
-
-        } catch (Exception exception) {
-
-            log.error("[Exception caught] : Session attributes have value {}",exception.getMessage());
-
-        }
-
-        TextArea accessTxt = new TextArea("Access Token");
-        TextArea refreshTxt = new TextArea("Refresh Token");
-        accessTxt.setWidthFull();
-        refreshTxt.setWidthFull();
-        accessTxt.setValue(accessToken);
-        refreshTxt.setValue(refreshToken);
-
-        Button buttonCopy = new Button("Copy", VaadinIcon.COPY.create());
-        buttonCopy.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonCopy.addClickListener(buttonClickEvent -> {
-
-            // Copy to clipboard
-            String textToCopy = accessTxt.getValue();
-            UI.getCurrent().getPage().executeJs("window.copyToClipboard($0)",textToCopy);
-
-        });
-
-        Button buttonCopy2 = new Button("Copy",VaadinIcon.COPY.create());
-        buttonCopy2.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonCopy2.addClickListener(buttonClickEvent -> {
-
-            // Copy to clipboard
-            String textToCopy = refreshTxt.getValue();
-            UI.getCurrent().getPage().executeJs("window.copyToClipboard($0)",textToCopy);
-
-        });
-
-        Button buttonLogout = new Button("Logout from account");
-        buttonLogout.addClickListener(buttonClickEvent -> {
-
-            UI.getCurrent().getSession().setAttribute("accessToken","");
-            UI.getCurrent().getSession().setAttribute("refreshToken","");
-            UI.getCurrent().navigate("login");
-
-        });
-
-       verticalLayout.add(
-
-                new H2("Your credentials are right here! :)"),
-                new H5("Please be sure to keep these credentials private and confidential"),
-                accessTxt,
-                buttonCopy,
-                refreshTxt,
-                buttonCopy2,
-                buttonLogout
-
+                img,
+                new H5("This view has been left like this intentionally. :)"),
+                VaadinIcon.SMILEY_O.create()
         );
 
         verticalLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);

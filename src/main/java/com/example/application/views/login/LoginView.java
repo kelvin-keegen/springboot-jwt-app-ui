@@ -94,17 +94,7 @@ public class LoginView extends VerticalLayout {
 
                 ApiResponseBody responseBody = restClientService.Http_POST_ResponseBody(serverLink,mediaType,authObjectModel,"");
 
-                if (responseBody.getMessage() == null) {
-
-                    myNotificationService.SendErrorNotification("Internal server error")
-                            .addDetachListener(detachEvent -> {
-
-                                buttonSend.setEnabled(true);
-
-                            });
-                }
-
-                if (responseBody.getMessage() != null && responseBody.getData() != null) {
+                if (responseBody.getStatusCode() == 200) {
 
                     // Unpack data
                     String accessTokenValue = retrievalService.GetObjValue(responseBody.getData(),"accessToken").toString();
@@ -114,12 +104,13 @@ public class LoginView extends VerticalLayout {
 
                         UI.getCurrent().getSession().setAttribute("accessToken",accessTokenValue);   // per user.
                         UI.getCurrent().getSession().setAttribute("refreshToken",refreshTokenValue);
+                        UI.getCurrent().getSession().setAttribute("email",textFieldUserName.getValue());
 
                         UI.getCurrent().navigate("home");
 
                     } else {
 
-                        myNotificationService.SendErrorNotification("Something went wrong!")
+                        myNotificationService.SendErrorNotification(responseBody.getMessage())
                                 .addDetachListener(detachEvent -> {
 
                                     buttonSend.setEnabled(true);
