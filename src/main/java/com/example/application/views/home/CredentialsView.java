@@ -75,14 +75,11 @@ public class CredentialsView extends VerticalLayout {
         });
 
         Button buttonLogout = new Button("Logout from account");
+        buttonLogout.addThemeVariants(ButtonVariant.LUMO_ERROR);
         buttonLogout.addClickListener(buttonClickEvent -> {
 
-            UI.getCurrent().navigate("login");
-
-            // Invalidate session attributes
-            UI.getCurrent().getSession().setAttribute("accessToken",null);
-            UI.getCurrent().getSession().setAttribute("refreshToken",null);
-            UI.getCurrent().getSession().setAttribute("email",null);
+            UI.getCurrent().getSession().close();
+            UI.getCurrent().getPage().setLocation("login");
 
         });
 

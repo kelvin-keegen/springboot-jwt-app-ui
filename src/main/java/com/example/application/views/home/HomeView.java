@@ -14,6 +14,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -38,9 +39,20 @@ public class HomeView extends AppLayout {
                 .set("font-size", "var(--lumo-font-size-l)")
                 .set("margin", "0");
 
+        Button logoutBtn = new Button("Sign Out",VaadinIcon.SIGN_OUT.create());
+        logoutBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        logoutBtn.addClickListener(buttonClickEvent -> {
+
+
+            UI.getCurrent().getSession().close();
+            UI.getCurrent().getPage().setLocation("login");
+
+        });
+
         Tabs tabs = getTabs();
 
         addToDrawer(tabs);
+        addToDrawer(logoutBtn);
         addToNavbar(toggle, title);
         setContent(SetRootDefaultContent());
     }

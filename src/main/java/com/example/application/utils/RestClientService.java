@@ -109,4 +109,48 @@ public class RestClientService {
         }
 
     }
+
+    public ApiResponseBody Http_PATCH_ResponseBody(String link,String token) {
+
+        try {
+
+            ApiResponseBody apiResponseBody = client.build()
+                    .patch()
+                    .uri(link)
+                    .headers(httpHeaders -> httpHeaders.setBearerAuth(token))
+                    .retrieve()
+                    .bodyToMono(ApiResponseBody.class)
+                    .block();
+
+            if (apiResponseBody != null) {
+
+                if (apiResponseBody.getStatusCode() != 0 && !apiResponseBody.getMessage().isEmpty()) {
+
+                    return apiResponseBody;
+
+                } else if (apiResponseBody.getStatusCode() == 500 && apiResponseBody.getMessage().isEmpty()) {
+
+                    log.error("Generic Internal server error check remote sever for logs");
+                    return new ApiResponseBody(500,null,"Internal server error");
+
+                } else {
+
+                    log.error("Status Code is 0 or empty. Please investigate!");
+                    return new ApiResponseBody(500,null,"Something went wrong!");
+
+                }
+            } else  {
+
+                log.error("No data or communication received from API server");
+                return new ApiResponseBody(500,null,"Remote is unavailable!");
+            }
+
+        } catch (Exception exception) {
+
+            log.error("An exception has been caught: [Exception] {}",exception.getMessage());
+            return new ApiResponseBody(500,null, "Fatal encounter");
+
+        }
+
+    }
 }

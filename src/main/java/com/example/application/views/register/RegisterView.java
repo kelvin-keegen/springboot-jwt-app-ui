@@ -1,6 +1,10 @@
 package com.example.application.views.register;
 
+import com.example.application.entity.enums.UserRoles;
+import com.example.application.entity.models.ApiResponseBody;
+import com.example.application.entity.models.RegistrationModel;
 import com.example.application.utils.MyNotificationService;
+import com.example.application.utils.RestClientService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -12,6 +16,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 
 @PageTitle("Register")
 @Route(value = "register")
@@ -21,6 +27,12 @@ public class RegisterView extends VerticalLayout {
     @Autowired
     private MyNotificationService myNotificationService;
 
+    @Autowired
+    private RestClientService restClientService;
+
+    @Value("${api-server.register.link}")
+    private String link;
+
     public RegisterView() {
 
         TextField textFieldFirstName = new TextField("First name");
@@ -28,9 +40,6 @@ public class RegisterView extends VerticalLayout {
 
         TextField textFieldLastName = new TextField("Last name");
         textFieldLastName.setRequired(true);
-
-        TextField textFieldUserName = new TextField("Username");
-        textFieldUserName.setRequired(true);
 
         TextField textFieldEmail = new TextField("Email");
         textFieldEmail.setRequired(true);
@@ -42,15 +51,12 @@ public class RegisterView extends VerticalLayout {
         buttonSend.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonSend.addClickListener(buttonClickEvent -> {
 
-            if (textFieldFirstName.isEmpty() || textFieldLastName.isEmpty() ||
-            textFieldUserName.isEmpty() || textFieldEmail.isEmpty() || passwordField.isEmpty()) {
+            if (textFieldFirstName.isEmpty() || textFieldLastName.isEmpty() || textFieldEmail.isEmpty() || passwordField.isEmpty()) {
 
                 if (textFieldFirstName.isEmpty())
                 textFieldFirstName.setInvalid(true);
                 if (textFieldLastName.isEmpty())
                 textFieldLastName.setInvalid(true);
-                if (textFieldUserName.isEmpty())
-                textFieldUserName.setInvalid(true);
                 if (textFieldEmail.isEmpty())
                 textFieldEmail.setInvalid(true);
                 if (passwordField.isEmpty())
@@ -61,7 +67,6 @@ public class RegisterView extends VerticalLayout {
 
                             textFieldFirstName.setInvalid(false);
                             textFieldLastName.setInvalid(false);
-                            textFieldUserName.setInvalid(false);
                             textFieldEmail.setInvalid(false);
                             passwordField.setInvalid(false);
 
@@ -69,10 +74,38 @@ public class RegisterView extends VerticalLayout {
 
             } else {
 
-                myNotificationService.SendSuccessNotification("Thank you! Please proceed to login :)");
+                buttonSend.setEnabled(false);
 
-                UI.getCurrent().navigate("login");
+                RegistrationModel registrationModel = new RegistrationModel(
 
+                        textFieldFirstName.getValue(),
+                        textFieldLastName.getValue(),
+                        textFieldEmail.getValue(),
+                        passwordField.getValue(),
+                        UserRoles.USER
+                );
+
+                ApiResponseBody responseBody = RegistrationFunc(registrationModel);
+
+                if (responseBody.getStatusCode() == 200) {
+
+                    myNotificationService.SendSuccessNotification("Thank you! Please proceed to login :)")
+                            .addDetachListener(detachEvent -> {
+
+                                buttonSend.setEnabled(false);
+
+                            });
+
+                } else {
+
+                    myNotificationService.SendErrorNotification(responseBody.getMessage())
+                            .addDetachListener(detachEvent -> {
+
+                                buttonSend.setEnabled(true);
+
+                            });
+
+                }
             }
 
         });
@@ -91,7 +124,6 @@ public class RegisterView extends VerticalLayout {
                 new H5("Let's get to know each other a bit better... :)"),
                 textFieldFirstName,
                 textFieldLastName,
-                textFieldUserName,
                 textFieldEmail,
                 passwordField,
                 buttonSend,
@@ -100,6 +132,19 @@ public class RegisterView extends VerticalLayout {
         );
 
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+    }
+
+    private ApiResponseBody RegistrationFunc(RegistrationModel registrationModel) {
+
+        if (registrationModel == null) {
+
+            return null;
+        }
+
+        MediaType mediaType = MediaType.parseMediaType(MediaType.APPLICATION_JSON_VALUE);
+
+        return restClientService.Http_POST_ResponseBody(link,mediaType,registrationModel,"");
+
     }
 
 }
