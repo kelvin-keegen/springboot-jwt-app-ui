@@ -2,6 +2,7 @@ package com.example.application.views.passwordchange;
 
 import com.example.application.entity.models.ApiResponseBody;
 import com.example.application.entity.models.PasswordChangeModel;
+import com.example.application.utils.ConditionalRedirection;
 import com.example.application.utils.MyNotificationService;
 import com.example.application.utils.RestClientService;
 import com.example.application.views.home.HomeView;
@@ -31,11 +32,14 @@ public class PasswordChangeView extends VerticalLayout {
     @Value("${api-server.pwd-change.link}")
     private String serverLink;
 
+    private final String emailAddress;
+
     public PasswordChangeView() {
+
+        emailAddress = new ConditionalRedirection().SessionVariableExtractor("email");
 
         add(SetContentOnView());
     }
-
 
     private VerticalLayout SetContentOnView() {
 
@@ -76,7 +80,6 @@ public class PasswordChangeView extends VerticalLayout {
 
             } else {
 
-                String emailAddress = UI.getCurrent().getSession().getAttribute("email").toString();
                 PasswordChangeModel passwordChangeModel = new PasswordChangeModel(
 
                         textFieldOldPWD.getValue(),
@@ -108,7 +111,6 @@ public class PasswordChangeView extends VerticalLayout {
             }
 
         });
-
 
         buttonTryLogin.addClickListener(buttonClickEvent -> {
 

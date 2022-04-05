@@ -1,5 +1,7 @@
 package com.example.application.views.home;
 
+import com.example.application.utils.ConditionalRedirection;
+import com.example.application.utils.MyNotificationService;
 import com.example.application.utils.RetrievalService;
 import com.example.application.views.login.LoginView;
 import com.vaadin.flow.component.UI;
@@ -28,7 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public class CredentialsView extends VerticalLayout {
 
+    private final String accessToken;
+    private final String refreshToken;
+
     public CredentialsView() {
+
+       accessToken = new ConditionalRedirection().SessionVariableExtractor("accessToken");
+       refreshToken = new ConditionalRedirection().SessionVariableExtractor("refreshToken");
 
         add(CredentialsTabComponents());
     }
@@ -36,16 +44,6 @@ public class CredentialsView extends VerticalLayout {
     private VerticalLayout CredentialsTabComponents() {
 
         VerticalLayout verticalLayout = new VerticalLayout();
-
-        Image img = new Image("images/empty-plant.png", "placeholder plant");
-        img.setWidth("200px");
-
-        String templateToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c[This is a template]";
-        String accessToken = "";
-        String refreshToken = "";
-
-        accessToken = UI.getCurrent().getSession().getAttribute("accessToken").toString();
-        refreshToken = UI.getCurrent().getSession().getAttribute("refreshToken").toString();
 
         TextArea accessTxt = new TextArea("Access Token");
         TextArea refreshTxt = new TextArea("Refresh Token");
