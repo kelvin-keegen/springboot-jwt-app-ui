@@ -12,6 +12,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -45,11 +46,11 @@ public class PasswordChangeView extends VerticalLayout {
 
         VerticalLayout verticalLayout = new VerticalLayout();
 
-        TextField textFieldOldPWD = new TextField("Old Password");
+        PasswordField textFieldOldPWD = new PasswordField("Old Password");
         textFieldOldPWD.setRequired(true);
-        TextField textFieldNewPWD = new TextField("New Password");
+        PasswordField textFieldNewPWD = new PasswordField("New Password");
         textFieldNewPWD.setRequired(true);
-        TextField textFieldVeryPWD = new TextField("Confirm Password");
+        PasswordField textFieldVeryPWD = new PasswordField("Confirm Password");
         textFieldVeryPWD.setRequired(true);
 
         Button buttonChange = new Button("Please change my Password");
