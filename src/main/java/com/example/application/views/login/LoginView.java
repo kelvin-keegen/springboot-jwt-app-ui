@@ -25,7 +25,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.*;
 
 @PageTitle("Login")
-@Route(value = "login")
+@Route(value = "")
 @Slf4j
 public class LoginView extends VerticalLayout {
 
